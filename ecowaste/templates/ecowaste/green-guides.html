@@ -1,5 +1,34 @@
 {% extends 'ecowaste/base.html' %}
-
 {% block content %}
-    <h1>EcoWaste App Green Guides</h1>
+<div class="container my-5">
+    <h1 class="text-center mb-4">EcoWaste Green Guides</h1>
+    <p class="lead text-center">Discover valuable resources and curated articles to support eco-friendly waste management practices.</p>
+    
+    <!-- Links Section -->
+    <div class="mt-5">
+        <h2 class="mb-3">External Links</h2>
+        <div class="list-group">
+            <a href="https://www.sanjoseca.gov/your-government/departments-offices/environmental-services" target="_blank" class="list-group-item list-group-item-action">
+                San Jose Environmental Services
+            </a>
+            <!-- Add other links here in the same format -->
+        </div>
+    </div>
+
+    <!-- Articles Section -->
+    <div class="mt-5">
+        <h2 class="mb-3">Curated Articles</h2>
+        <div class="card-deck">
+            <!-- Example Article Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Eco-Friendly Living: A Guide</h5>
+                    <p class="card-text">Learn how to adopt eco-friendly practices in your daily life with this comprehensive guide.</p>
+                    <a href="https://www.example.com/article1" target="_blank" class="btn btn-success">Read More</a>
+                </div>
+            </div>
+            <!-- Repeat for other articles -->
+        </div>
+    </div>
+</div>
 {% endblock content %}
