@@ -2,4 +2,33 @@
 
 {% block content %}
     <h1>EcoWaste App Waste Tracker</h1>
+    
+    <!-- Form to add new waste item with additional fields -->
+    <form method="POST">
+        <label for="waste_item">Waste Item:</label>
+        <input type="text" id="waste_item" name="waste_item" placeholder="E.g., plastic bottle" required>
+        
+        <label for="category">Category:</label>
+        <input type="text" id="category" name="category" placeholder="E.g., food, paper, plastic" required>
+
+        <label for="quantity">Weight/Quantity:</label>
+        <input type="text" id="quantity" name="quantity" placeholder="E.g., 1 kg, 2 bottles" required>
+        
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+        
+        <button type="submit">Add Waste</button>
+    </form>
+
+    <!-- List of tracked waste items with additional details -->
+    <h2>Tracked Waste Items</h2>
+    <ul>
+        {% for item in waste_items %}
+            <li>
+                {{ item.name }} - {{ item.category }} - {{ item.quantity }} - {{ item.date_added }}
+            </li>
+        {% empty %}
+            <li>No waste items tracked yet.</li>
+        {% endfor %}
+    </ul>
 {% endblock content %}
