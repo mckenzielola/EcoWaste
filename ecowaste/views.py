@@ -1,5 +1,7 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from . import models
+from .models import WasteItem
+from .forms import WasteItemForm
 
 
 def home(request):
@@ -22,7 +24,17 @@ def freshness_tracker(request):
 
 def waste_tracker(request):
 # send http request to render waste tracker html page
-    return render(request, "ecowaste/waste-tracker.html")
+    if request.method == 'POST':
+        form = WasteItemForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('ecowaste-waste-tracker')
+    else:
+        form = WasteItemForm()
+
+    waste_items = WasteItem.objects.all()
+    return render(request, "ecowaste/waste-tracker.html", {'form': form, 'waste_items': waste_items})
+
 
 def impact_calculator(request):
 # send http request to render impactcalculator html page
