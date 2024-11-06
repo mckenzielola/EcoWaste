@@ -1,5 +1,15 @@
 {% extends 'ecowaste/base.html' %}
 
 {% block content %}
-    <h1>EcoWaste App Home</h1>
+<h1>EcoWaste App Home</h1>
+{% for item in items %}
+<div class="card" style ="width:18rem;">
+    <div class="card-body">
+        <h5 class="card-perishable">{{ item.perishable }}</h5>
+        <h6 class="card-quantity mb-2 text-muted"> Quantity: {{ item.quantity }}</h5>
+        <h6 class="card-expiration mb-2 text-muted">{{item.expiration}}</h6>
+        <a href="#" class="card-link">View Perishable</a>
+    </div>
+</div>
+{% endfor %}
 {% endblock content %}

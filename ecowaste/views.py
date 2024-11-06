@@ -1,8 +1,16 @@
 from django.shortcuts import render, HttpResponse
+from . import models
+
 
 def home(request):
+    items = models.Item.objects.all()
+    context = {
+        'items': items
+    }
+    # retrieve all of the perishables created by the user
+    # items = models.Item.objects.all()
     # send http request to render home html page
-    return render(request, "ecowaste/home.html")
+    return render(request, "ecowaste/home.html", context)
 
 def about(request):
 # send http request to render about html page
