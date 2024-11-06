@@ -44,6 +44,16 @@
                   </li>
                 </ul>
               </div>
+              <div class="navbar-nav">
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'user-logout' %}" style="display: inline;"> 
+                  {% csrf_token %} 
+                  <button type="submit" class="nav-item nav-link btn btn-link" style="padding: 0; border: none; cursor: pointer;">Logout</button>
+                {% else %}
+                <a class="nav-item nav-link" href="{% url 'user-login' %}">Login</a>
+                <a class="nav-item nav-link" href="{% url 'user-register' %}">Register</a>
+                {% endif %}
+              </div>
             </div>
           </nav>
           <div class="container" mt-1 col-4>
