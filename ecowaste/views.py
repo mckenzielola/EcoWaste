@@ -2,7 +2,7 @@ from django.shortcuts import render, HttpResponse, redirect
 from . import models
 from .models import WasteItem
 from .forms import WasteItemForm
-
+from django.views.generic import ListView, DetailView
 
 def home(request):
     items = models.Item.objects.all()
@@ -13,6 +13,15 @@ def home(request):
     # items = models.Item.objects.all()
     # send http request to render home html page
     return render(request, "ecowaste/home.html", context)
+
+
+class PerishableListView(ListView):
+    model = models.Item
+    template_name = 'ecowaste/home.html'
+    context_object_name = 'items'
+
+class PerishableDetailView(DetailView):
+    model = models.Item
 
 def about(request):
 # send http request to render about html page
