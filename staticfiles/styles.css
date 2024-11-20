@@ -1,0 +1,106 @@
+/* styles.css */
+.container h1 {
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.list-group-item {
+    border: none;
+    padding: 15px;
+    font-size: 1.1em;
+}
+
+.card-deck .card {
+    border: none;
+    transition: transform 0.2s ease;
+}
+
+.card-deck .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    font-weight: 600;
+}
+
+
+
+.impact-calculator-form {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.impact-calculator-form h3 {
+    font-weight: 600;
+    color: #34495e;
+}
+
+.impact-calculator-form h5 {
+    margin-top: 15px;
+    font-weight: 500;
+    color: #34495e;
+}
+
+.impact-calculator-form .form-group {
+    margin-bottom: 15px;
+}
+
+.impact-calculator-form label {
+    font-size: 1.1em;
+    color: #555;
+}
+
+.impact-calculator-form input {
+    font-size: 1em;
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+.impact-calculator-form button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+}
+
+.impact-calculator-form button:hover {
+    background-color: #218838;
+}
+
+.impact-result {
+    margin-top: 30px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #eaf7e2;
+}
+
+.impact-result h3 {
+    font-size: 1.5em;
+    color: #2d6a4f;
+}
+
+.impact-result p {
+    font-size: 1.2em;
+    color: #2d6a4f;
+    font-weight: 600;
+}
+
+.impact-result strong {
+    font-weight: 700;
+    color: #e74c3c;
+}

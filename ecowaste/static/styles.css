@@ -1,0 +1,196 @@
+/* styles.css */
+
+.navbar{
+    background-color: #268005; /* Bootstrap primary color */
+    color: white;
+    font-weight: bold;
+}
+
+/* Styling for active tab */
+.navbar-logo {
+    padding-right: 4%;
+}
+
+/* Styling for active tab */
+.navbar-nav .nav-link.active {
+    background-color: #193b0c; 
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+/* Hover effect for navbar links */
+.navbar-nav .nav-link {
+    color: rgb(0, 0, 0);
+    border-radius: 5px;
+}
+
+/* Hover effect for navbar links */
+.navbar-nav .nav-link:hover {
+    background-color: #193b0c; 
+    border-radius: 5px;
+    color: white;
+}
+
+/* Optional: Make the navbar items evenly spaced */
+.navbar-nav {
+    display: flex;
+    gap: 0.3rem;
+}
+
+
+.container h1 {
+    font-weight: 800;
+    color: #1373d2;
+}
+
+.list-group-item {
+    border: none;
+    padding: 15px;
+    font-size: 1.1em;
+}
+
+.card-deck .card {
+    border: none;
+    transition: transform 0.2s ease;
+}
+
+.card-deck .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    font-weight: 600;
+}
+
+
+
+.impact-calculator-form {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.impact-calculator-form h3 {
+    font-weight: 600;
+    color: #34495e;
+}
+
+.impact-calculator-form h5 {
+    margin-top: 15px;
+    font-weight: 500;
+    color: #34495e;
+}
+
+.impact-calculator-form .form-group {
+    margin-bottom: 15px;
+}
+
+.impact-calculator-form label {
+    font-size: 1.1em;
+    color: #555;
+}
+
+.impact-calculator-form input {
+    font-size: 1em;
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+
+
+
+/* Change color on hover */
+.nav-tabs .nav-link:hover {
+    background-color: #f0f8ff; /* Light blue */
+    color: #000; /* Black */
+}
+
+/* Active tab styling */
+.nav-tabs .nav-link.active {
+    background-color: #007bff; /* Bootstrap primary blue */
+    color: #fff; /* White */
+}
+
+/* Sub-tab hover styling */
+.nav-tabs .nav-link:not(.active):hover {
+    background-color: #dcdcdc; /* Light gray for inactive tabs */
+}
+
+
+
+
+/* Form styling */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items:stretch;
+    align-content:stretch;
+    gap: 0.1rem;
+    width: 90%;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+/* Labels and inputs aligned vertically */
+form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    width: 100%;
+}
+
+/* Text input and dropdown styling */
+form input[type="text"],
+form select {
+    width: 100%; /* Full width for uniform appearance */
+    max-width: 380px;
+    padding: 0.3rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* Submit button styling */
+form button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+/* List styling for tracked waste items */
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+ul li {
+    padding: 0.3rem 0;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Heading alignment */
+h1, h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+}

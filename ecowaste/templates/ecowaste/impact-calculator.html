@@ -1,5 +1,124 @@
 {% extends 'ecowaste/base.html' %}
+{% load static %} 
+
+<head>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const today = new Date();
+            const lastWeek = new Date(today);
+            lastWeek.setDate(today.getDate() - 7);
+            
+            // Initialize date values for custom range
+            document.getElementById("co2-start-date").value = lastWeek.toISOString().split("T")[0];
+            document.getElementById("co2-end-date").value = today.toISOString().split("T")[0];
+
+            loadImpactData("co2", "past-week", "#co2-past-week-impact");
+            loadImpactData("co2", "past-month", "#co2-past-month-impact");
+            loadImpactData("co2", "past-quarter", "#co2-past-quarter-impact");
+            loadImpactData("co2", "past-year", "#co2-past-year-impact");
+            
+            document.querySelectorAll('.nav-link').forEach(function(tab) {
+                tab.addEventListener('click', function(event) {
+                    handleTabClick(event);
+                });
+            });
+
+            // Listen for custom range form submission
+            document.getElementById("co2-custom-range-form").addEventListener("submit", function(event) {
+                event.preventDefault();
+                const startDate = document.getElementById("co2-start-date").value;
+                const endDate = document.getElementById("co2-end-date").value;
+                loadImpactData("co2", `custom/${startDate}/${endDate}`, "#co2-custom-impact");
+            });
+        });
+
+        function handleTabClick(event) {
+            const activeTab = document.querySelector('.nav-link.active');
+            if (activeTab) activeTab.classList.remove('active');
+            event.target.classList.add('active');
+
+            const targetId = event.target.getAttribute('data-bs-target');
+            const activeContent = document.querySelector('.tab-pane.show.active');
+            if (activeContent) activeContent.classList.remove('show', 'active');
+            document.querySelector(targetId).classList.add('show', 'active');
+
+            const tabName = targetId.split('-')[0]; 
+            const range = targetId.split('-')[1]; 
+            loadImpactData(tabName, range, `#${tabName}-${range}-impact`);
+        }
+
+        function loadImpactData(type, range, elementId) {
+            fetch(`/calculate-impact/co2/${range}/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelector(elementId).innerHTML = data.impact;
+                })
+                .catch(error => console.error('Error loading impact data:', error));
+        }
+    </script>
+</head>
 
 {% block content %}
-    <h1>EcoWaste App Impact Calculator</h1>
-{% endblock content %}
+<div class="container mt-5">
+    <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="co2-tab" data-bs-toggle="tab" data-bs-target="#co2" type="button" role="tab">CO2 Footprint Calculator</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="waste-tab" data-bs-toggle="tab" data-bs-target="#waste" type="button" role="tab">Waste Calculator</button>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3" id="mainTabsContent">
+        <div class="tab-pane fade show active" id="co2" role="tabpanel">
+            <ul class="nav nav-tabs" id="co2SubTabs" role="tablist">
+                <!-- CO2 Sub Tabs -->
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#co2-past-week">Past Week</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-past-month">Past Month</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-past-quarter">Past Quarter</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-past-year">Past Year</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-custom">Custom Range</button>
+                </li>
+            </ul>
+            <div class="tab-content mt-3">
+                <div class="tab-pane fade show active" id="co2-past-week">
+                    <p id="co2-past-week-impact">Loading past week CO2 impact...</p>
+                </div>
+                <div class="tab-pane fade" id="co2-past-month">
+                    <p id="co2-past-month-impact">Loading past month CO2 impact...</p>
+                </div>
+                <div class="tab-pane fade" id="co2-past-quarter">
+                    <p id="co2-past-quarter-impact">Loading past quarter CO2 impact...</p>
+                </div>
+                <div class="tab-pane fade" id="co2-past-year">
+                    <p id="co2-past-year-impact">Loading past year CO2 impact...</p>
+                </div>
+                <div class="tab-pane fade" id="co2-custom">
+                    <form id="co2-custom-range-form">
+                        <label for="co2-start-date">Start Date:</label>
+                        <input type="date" id="co2-start-date" name="start_date" required>
+                        <label for="co2-end-date">End Date:</label>
+                        <input type="date" id="co2-end-date" name="end_date" required>
+                        <button type="submit" class="btn btn-primary mt-3">Calculate Custom CO2 Footprint</button>
+                    </form>
+                    <p id="co2-custom-impact">Custom range CO2 impact will be displayed here.</p>
+                </div>
+            </div>
+        </div>
+        <!-- Waste Tab Content -->
+        <div class="tab-pane fade" id="waste" role="tabpanel">
+            <p>Waste Calculator content...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

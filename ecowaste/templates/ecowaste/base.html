@@ -1,70 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        {% load static %}
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE-edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% if title %}
-        <title>{{title}}</title>
+        <title>{{ title }}</title>
         {% else %}
         <title>EcoWaste App</title>
         {% endif %}
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" 
-        rel="stylesheet" 
-        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" 
-        crossorigin="anonymous">
-        <link rel="stylesheet" href="{% static 'ecowaste\templates\ecowaste\styles.css'}">
+              rel="stylesheet" 
+              integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" 
+              crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static 'styles.css' %}">
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg">
             <div class="container">
-              <a class="navbar-brand" href="">EcoWaste</a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                  <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'ecowaste-home' %}">Home</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'ecowaste-freshness-tracker' %}">Freshness Tracker</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'ecowaste-waste-tracker' %}">Waste Tracker</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'ecowaste-impact-calculator' %}">Impact Calculator</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'ecowaste-green-guides' %}">Green Guides</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'ecowaste-about' %}">About</a>
-                  </li>
-                </ul>
-              </div>
-              <div class="navbar-nav align-items-center">
-                {% if user.is_authenticated %}
-                <a class="nav-item nav-link" href="{% url 'user-profile' %}">My Profile</a>
-                <form method="post" action="{% url 'user-logout' %}" style="display: inline;"> 
-                  {% csrf_token %} 
-                    <button type="submit" class="nav-item nav-link btn btn-link" style="padding: 0; border: none; cursor: pointer;">Logout</button>
-                </form>
-                {% else %}
-                <a class="nav-item nav-link" href="{% url 'user-login' %}">Login</a>
-                <a class="nav-item nav-link" href="{% url 'user-register' %}">Register</a>
-                {% endif %}
-              </div>
+                <!-- Logo instead of text "EcoWaste" <a class="navbar-brand" href="">EcoWaste</a>-->
+                <div class="navbar-logo" href="">
+                    <img src="{% static 'logo.png' %}" alt="EcoWaste Logo" style="height: 70px; border-radius:10px;">
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'ecowaste-home' %}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/freshness-tracker/' %}active{% endif %}" href="{% url 'ecowaste-freshness-tracker' %}">Freshness Tracker</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/waste-tracker/' %}active{% endif %}" href="{% url 'ecowaste-waste-tracker' %}">Waste Tracker</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/impact-calculator/' %}active{% endif %}" href="{% url 'ecowaste-impact-calculator' %}">Impact Calculator</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/green-guides/' %}active{% endif %}" href="{% url 'ecowaste-green-guides' %}">Green Guides</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/about/' %}active{% endif %}" href="{% url 'ecowaste-about' %}">About</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="navbar-nav">
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'user-logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-item nav-link btn btn-link" style="padding: 0; border: none; cursor: pointer;">Logout</button>
+                    </form>
+                    {% else %}
+                    <li class="nav-item nav-link {% if request.path == '/login/' %}active{% endif %}" href="{% url 'user-login' %}">Login</li>
+                    <li class="nav-item nav-link {% if request.path == '/register/' %}active{% endif %}" href="{% url 'user-register' %}">Register</li>
+                    {% endif %}
+                </div>
             </div>
-          </nav>
-          <div class="container" mt-1 col-4>
-             {% if messages %}
+        </nav>
+        <div class="container mt-1">
+            {% if messages %}
                 {% for message in messages %}
-                  <div class="alert alert-{{ message.tags}}">{{ message }}</div>
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
                 {% endfor %}
-              {% endif %}
+            {% endif %}
             {% block content %} {% endblock content %}
-          </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" 
+                integrity="sha384-uH6A7ThF8sW3/8bn3p5cpVfzoH6F5nHwHGjp2qJpD5r3eZ2KkL+uCXI9wAmWflbD" 
+                crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" 
+                integrity="sha384-cuFyeZs38n8L58n6P6mOLsLjcYlwKn3HTttDYi4zF6lKE+gvEJpBsDkzST5LGpDm" 
+                crossorigin="anonymous"></script>
     </body>
 </html>
