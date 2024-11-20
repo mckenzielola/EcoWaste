@@ -107,8 +107,8 @@ def calculate_waste_impact(waste_data):
 
 def calculate_co2_impact(request, range):
     # Your logic for CO2 calculation here
-    return render(request, 'impact_result.html', {'range': range})
+    return render(request, 'ecowaste/impact_result.html', {'range': range})
 
 def calculate_waste_impact(request, range):
     # Your logic for waste calculation here
-    return render(request, 'impact_result.html', {'range': range})
+    return render(request, 'ecowaste/impact_result.html', {'range': range})

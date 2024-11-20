@@ -48,15 +48,16 @@
                         </li>
                     </ul>
                 </div>
-                <div class="navbar-nav">
+                <div class="navbar-nav align-items-center">
                     {% if user.is_authenticated %}
+                    <a class="nav-item nav-link" href="{% url 'user-profile' %}">My Profile</a>  
                     <form method="post" action="{% url 'user-logout' %}" style="display: inline;">
                         {% csrf_token %}
                         <button type="submit" class="nav-item nav-link btn btn-link" style="padding: 0; border: none; cursor: pointer;">Logout</button>
                     </form>
                     {% else %}
-                    <li class="nav-item nav-link {% if request.path == '/login/' %}active{% endif %}" href="{% url 'user-login' %}">Login</li>
-                    <li class="nav-item nav-link {% if request.path == '/register/' %}active{% endif %}" href="{% url 'user-register' %}">Register</li>
+                    <a class="nav-item nav-link" href="{% url 'user-login' %}">Login</a>
+                    <a class="nav-item nav-link" href="{% url 'user-register' %}">Register</a>
                     {% endif %}
                 </div>
             </div>
