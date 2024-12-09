@@ -55,7 +55,7 @@ class WasteItemForm(forms.ModelForm):
         "Milk", "Juice", "Coffee", "Tea", "Soda", "Smoothies", "Energy drink"
         "Beer", "Wine", "Vodka", "Whiskey", "Rum", "Tequila", "Champagne"
     ])
-]
+    ]
 
     CATEGORY_CHOICES = [(category, category) for category, foods in FOOD_CATEGORIES]
 
