@@ -9,7 +9,11 @@ urlpatterns = [
     path('freshness-tracker/', views.freshness_tracker, name="ecowaste-freshness-tracker"),
     path('waste-tracker/', views.waste_tracker, name="ecowaste-waste-tracker"),
     path('impact-calculator/', views.impact_calculator, name="ecowaste-impact-calculator"),
+    
+    
     path('green-guides/', views.green_guides, name="ecowaste-green-guides"),
+    path('green-guides/<int:id>/', views.article_detail, name='article-detail'),
+
 
     # Impact Calculation URLs
     path('calculate-impact/co2/<str:range>/', views.calculate_co2_impact, name='calculate_co2_impact'),

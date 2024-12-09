@@ -6,6 +6,12 @@ from .models import FoodDatabase, ImpactCalculator, WasteItem
 from .forms import WasteItemForm
 from django.shortcuts import render
 from datetime import datetime, timedelta, timezone
+from .models import Article
+from django.shortcuts import get_object_or_404
+from django.core.files.storage import FileSystemStorage
+from django.http import FileResponse
+
+
 
 def home(request):
     items = models.Item.objects.all()
@@ -43,7 +49,12 @@ def impact_calculator(request):
     return render(request, "ecowaste/impact-calculator.html")
 
 def green_guides(request):
-    return render(request, "ecowaste/green-guides.html")
+    articles = Article.objects.all().order_by('-date_published')  # Fetch and order by date
+    return render(request, "ecowaste/green-guides.html", {'articles': articles})
+
+def article_detail(request, id):
+    article = Article.objects.get(pk=id)
+    return render(request, "ecowaste/article-detail.html", {'article': article})
 
 def eco_waste_view(request):
     user = request.user

@@ -268,3 +268,13 @@ class ImpactCalculator:
         else:
             date_info = "for all time"
         return f"Total waste for {self.user.username} ({date_info}): {total_waste} lbs"
+
+"Stuff for pushing local articles into green guides"
+
+class Article(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    date_published = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

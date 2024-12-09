@@ -1,33 +1,183 @@
-/* styles.css */
+/* General Container and Headers */
 .container h1 {
     font-weight: 700;
     color: #2c3e50;
 }
 
+/* List Group Items */
 .list-group-item {
     border: none;
     padding: 15px;
     font-size: 1.1em;
+    background-color: #f9f9f9;
+    transition: all 0.2s ease-in-out;
 }
 
-.card-deck .card {
+.list-group-item:hover {
+    background-color: #eaf7e2;
+    transform: translateX(5px);
+}
+
+.page-title {
+    font-size: 2.5rem; /* Match the format used on other pages */
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #28a745;
+    margin-bottom: 20px;
+}
+
+/* External Links Specific Styling */
+.external-links-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #34495e; /* Distinct color for external links */
+}
+
+.external-links .list-group-item {
     border: none;
-    transition: transform 0.2s ease;
+    padding: 15px;
+    font-size: 1.1em;
+    background-color: #f9f9f9;
+    transition: all 0.2s ease-in-out;
 }
 
-.card-deck .card:hover {
+.external-links .list-group-item:hover {
+    background-color: #eaf7e2;
+    transform: translateX(5px);
+}.page-title {
+    font-size: 2.5rem; /* Match the format used on other pages */
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #28a745;
+    margin-bottom: 20px;
+}
+
+/* External Links Specific Styling */
+.external-links-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #34495e; /* Distinct color for external links */
+}
+
+.external-links .list-group-item {
+    border: none;
+    padding: 15px;
+    font-size: 1.1em;
+    background-color: #f9f9f9;
+    transition: all 0.2s ease-in-out;
+}
+
+.external-links .list-group-item:hover {
+    background-color: #eaf7e2;
+    transform: translateX(5px);
+}
+
+/* Cards */
+.card {
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 8px;
+}
+
+.card:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
+/* Buttons */
 .btn-success {
     background-color: #28a745;
     border-color: #28a745;
     font-weight: 600;
+    transition: all 0.2s ease-in-out;
 }
 
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
 
+/* Green Guides Section */
+.green-guides-title {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
 
+.green-guides-description {
+    font-size: 1.2em;
+    color: #34495e;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+/* External Links */
+.external-links h2 {
+    color: #28a745;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.external-links .list-group {
+    margin-top: 20px;
+}
+
+.external-links .list-group-item strong {
+    color: #2c3e50;
+}
+
+.external-links .list-group-item p {
+    color: #555;
+    font-size: 0.9em;
+}
+
+/* Articles Section */
+.articles-section h2 {
+    color: #28a745;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.articles-section .card-title a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 600;
+    transition: color 0.2s ease-in-out;
+}
+
+.articles-section .card-title a:hover {
+    color: #28a745;
+}
+
+.articles-section .card-text {
+    color: #555;
+    font-size: 0.95em;
+    margin-bottom: 15px;
+}
+
+.articles-section .card-footer {
+    background-color: #f9f9f9;
+    font-size: 0.85em;
+    color: #888;
+    text-align: right;
+}
+
+/* Impact Calculator Form */
 .impact-calculator-form {
     margin-top: 20px;
     padding: 20px;
