@@ -1,12 +1,14 @@
 {% extends 'ecowaste/base.html' %}
+{% load static %}
+
 {% block content %}
 <div class="container my-5">
-    <h1 class="text-center mb-4">EcoWaste Green Guides</h1>
+    <h1 class="page-title text-center mb-4">EcoWaste Green Guides</h1>
     <p class="lead text-center">Discover valuable resources and curated articles to support eco-friendly waste management practices.</p>
     
     <!-- Links Section -->
     <div class="mt-5">
-        <h2 class="mb-3">External Links</h2>
+        <h2 class="section-title text-success mb-3">External Links</h2>
         <div class="list-group">
             <a href="https://www.sanjoseca.gov/your-government/departments-offices/environmental-services" target="_blank" class="list-group-item list-group-item-action">
                 San Jose Environmental Services
@@ -17,18 +19,31 @@
 
     <!-- Articles Section -->
     <div class="mt-5">
-        <h2 class="mb-3">Curated Articles</h2>
-        <div class="card-deck">
-            <!-- Example Article Card -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Eco-Friendly Living: A Guide</h5>
-                    <p class="card-text">Learn how to adopt eco-friendly practices in your daily life with this comprehensive guide.</p>
-                    <a href="https://www.example.com/article1" target="_blank" class="btn btn-success">Read More</a>
+        <h2 class="section-title text-success mb-3">Curated Articles</h2>
+        {% if articles %}
+            <div class="row">
+                {% for article in articles %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{% url 'article-detail' article.id %}" class="text-decoration-none text-dark">
+                                    {{ article.title }}
+                                </a>
+                            </h5>
+                            <p class="card-text text-muted">{{ article.content|slice:":150" }}...</p>
+                            <a href="{% url 'article-detail' article.id %}" class="btn btn-success btn-sm">Read More</a>
+                        </div>
+                        <div class="card-footer text-muted small">
+                            Published on: {{ article.date_published }}
+                        </div>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
-            <!-- Repeat for other articles -->
-        </div>
+        {% else %}
+            <p class="text-center text-muted">No articles available at the moment. Check back later!</p>
+        {% endif %}
     </div>
 </div>
 {% endblock content %}
