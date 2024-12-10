@@ -10,6 +10,7 @@ from .models import Article
 from django.shortcuts import get_object_or_404
 from django.core.files.storage import FileSystemStorage
 from django.http import FileResponse
+from django.db.models import Count
 
 
 
@@ -44,15 +45,25 @@ def waste_tracker(request):
             form = WasteItemForm()
         waste_items = WasteItem.objects.filter(user=request.user)
     else:
-        return redirect('login/')
+        form = WasteItemForm()
+
+    user_waste_count = WasteItem.objects.filter(user=request.user).count()
+
+    all_users_waste_count = WasteItem.objects.values('user').annotate(count=Count('id')).order_by('count')
+
+    total_users = len(all_users_waste_count)
+
+    lower_percentile = 100 * sum(1 for x in all_users_waste_count if x['count'] < user_waste_count) / total_users
+
+    waste_items = WasteItem.objects.filter(user=request.user)
 
     return render(request, "ecowaste/waste-tracker.html", {
         'form': form,
         'waste_items': waste_items,
+        'percentile': lower_percentile,
     })
 
 def delete_waste_item(request, waste_item_id):
-    # Get the waste item to delete
     waste_item = get_object_or_404(WasteItem, id=waste_item_id)
 
     if request.method == 'POST':

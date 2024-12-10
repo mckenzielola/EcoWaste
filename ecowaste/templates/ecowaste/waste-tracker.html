@@ -4,11 +4,20 @@
     <link rel="stylesheet" href="{% static 'styles.css' %}">
 
     <div class="container mt-5">
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Add Waste</button>
-        </form>
+        <div class="row">
+            <div class="col-md-6">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Add Waste</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <h3>Your Waste Items Comparison</h3>
+                <p>You have {{ waste_items.count }} waste items.</p>
+                <p>Your waste entries are in the {{ percentile|floatformat:0 }} percentile compared to all users.</p>
+            </div>
+        </div>
     </div>
 
     <h2 class="mt-5">Tracked Waste Items</h2>
@@ -19,7 +28,7 @@
                 <th>Category</th>
                 <th>Quantity</th>
                 <th>Date Added</th>
-                <th>Action</th>  <!-- Add a column for the delete button -->
+                <th>Action</th>  
             </tr>
         </thead>
         <tbody>
@@ -30,7 +39,6 @@
                     <td>{{ item.quantity }}</td>
                     <td>{{ item.date_added }}</td>
                     <td>
-                        <!-- Form to delete each item -->
                         <form method="POST" action="{% url 'delete_waste_item' item.id %}" style="display:inline;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger">Delete</button>
