@@ -32,17 +32,24 @@ def freshness_tracker(request):
     return render(request, "ecowaste/freshness-tracker.html")
 
 def waste_tracker(request):
-# send http request to render waste tracker html page
-    if request.method == 'POST':
-        form = WasteItemForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('ecowaste-waste-tracker')
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = WasteItemForm(request.POST)
+            if form.is_valid():
+                waste_item = form.save(commit=False)
+                waste_item.user = request.user
+                waste_item.save()
+                return redirect('ecowaste-waste-tracker')
+        else:
+            form = WasteItemForm()
+        waste_items = WasteItem.objects.filter(user=request.user)
     else:
-        form = WasteItemForm()
+        return redirect('login/')
 
-    waste_items = WasteItem.objects.all()
-    return render(request, "ecowaste/waste-tracker.html", {'form': form, 'waste_items': waste_items})
+    return render(request, "ecowaste/waste-tracker.html", {
+        'form': form,
+        'waste_items': waste_items,
+    })
 
 
 def impact_calculator(request):

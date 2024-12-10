@@ -25,6 +25,7 @@ urlpatterns = [
 
     # General CO2 Impact Calculation
     path('calculate_co2_impact/', views.calculate_co2_impact, name='calculate_co2_impact'),
+
 ]
 
 if settings.DEBUG:

@@ -15,6 +15,7 @@ class Item(models.Model):
     expiration = models.DateField()
 
 class WasteItem(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=100)
     category = models.CharField(max_length=50)
     quantity = models.CharField(max_length=50)
@@ -468,7 +469,6 @@ class ImpactCalculator:
             date_info = "for all time"
         return f"Total waste for {self.user.username} ({date_info}): {total_waste} lbs"
 
-<<<<<<< HEAD
 "Stuff for pushing local articles into green guides"
 
 class Article(models.Model):
@@ -478,5 +478,3 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
-=======
->>>>>>> origin/main
