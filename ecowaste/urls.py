@@ -8,6 +8,7 @@ urlpatterns = [
     path('about/', views.about, name="ecowaste-about"),
     path('freshness-tracker/', views.freshness_tracker, name="ecowaste-freshness-tracker"),
     path('waste-tracker/', views.waste_tracker, name="ecowaste-waste-tracker"),
+    path('delete_waste_item/<int:waste_item_id>/', views.delete_waste_item, name='delete_waste_item'),
     path('impact-calculator/', views.impact_calculator, name="ecowaste-impact-calculator"),
     
     

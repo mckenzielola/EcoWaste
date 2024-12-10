@@ -51,6 +51,16 @@ def waste_tracker(request):
         'waste_items': waste_items,
     })
 
+def delete_waste_item(request, waste_item_id):
+    # Get the waste item to delete
+    waste_item = get_object_or_404(WasteItem, id=waste_item_id)
+
+    if request.method == 'POST':
+        waste_item.delete()
+        return redirect('ecowaste-waste-tracker')  
+
+    return redirect('ecowaste-waste-tracker') 
+
 
 def impact_calculator(request):
     return render(request, "ecowaste/impact-calculator.html")
