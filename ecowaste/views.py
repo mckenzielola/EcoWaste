@@ -74,7 +74,12 @@ def waste_tracker(request):
 
     total_users = len(all_users_waste_count)
 
-    lower_percentile = 100 * sum(1 for x in all_users_waste_count if x['count'] < user_waste_count) / total_users
+    # check if users greater than 0
+    if total_users > 0:
+
+        lower_percentile = 100 * sum(1 for x in all_users_waste_count if x['count'] < user_waste_count) / total_users
+    else:
+        lower_percentile = 0 #when there are no users
 
     waste_items = WasteItem.objects.filter(user=request.user)
 

@@ -81,6 +81,13 @@ class WasteItemForm(forms.ModelForm):
     
 # create a form for adding perishable items to freshness tracker
 class PerishableItemForm(forms.ModelForm):
+    # Reuse the FOOD_CATEGORIES and CATEGORY_CHOICES from WasteItemForm 
+    FOOD_CATEGORIES = WasteItemForm.FOOD_CATEGORIES 
+    CATEGORY_CHOICES = WasteItemForm.CATEGORY_CHOICES 
+    
+    perishable = forms.ChoiceField(choices=[(food, food) for category, foods in FOOD_CATEGORIES for food in foods], required=True) 
+    category = forms.ChoiceField(choices=CATEGORY_CHOICES, required=True)
+    
     class Meta:
         model = Item
         fields = ['perishable', 'quantity', 'expiration', 'category']
