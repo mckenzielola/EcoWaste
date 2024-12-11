@@ -2,21 +2,26 @@ import json
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from . import models
-from .models import FoodDatabase, ImpactCalculator, WasteItem
-from .forms import WasteItemForm
+from .models import FoodDatabase, ImpactCalculator, WasteItem, Item
+from .forms import WasteItemForm, PerishableItemForm
 from django.shortcuts import render
 from datetime import datetime, timedelta, timezone
 from .models import Article
 from django.shortcuts import get_object_or_404
 from django.core.files.storage import FileSystemStorage
 from django.http import FileResponse
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 
-
-
+@login_required
 def home(request):
-    items = models.Item.objects.all()
+    perishable_items = Item.objects.filter(author=request.user).order_by('expiration')
+    waste_items = WasteItem.objects.filter(user=request.user)
+
+    # retrieve the items to render to the home.html
     context = {
-        'items': items
+        'perishable_items' : perishable_items,
+        'waste_items' : waste_items
     }
     # retrieve all of the perishables created by the user
     # items = models.Item.objects.all()
@@ -27,9 +32,25 @@ def about(request):
 # send http request to render about html page
     return render(request, "ecowaste/about.html")
 
+@login_required
 def freshness_tracker(request):
-# send http request to render freshness tracker html page
-    return render(request, "ecowaste/freshness-tracker.html")
+    if request.method == 'POST':
+        form = PerishableItemForm(request.POST)
+        if form.is_valid():
+            item = form.save(commit=False)
+            item.author = request.user
+            item.save()
+            return redirect('ecowaste-freshness-tracker')
+    else:
+        form = PerishableItemForm()
+
+    items = Item.objects.filter(author=request.user).order_by('expiration')
+    context = {
+        'form' : form,
+        'items' : items
+    }
+    # send http request to render freshness tracker html page
+    return render(request, "ecowaste/freshness-tracker.html", context)
 
 def waste_tracker(request):
     if request.user.is_authenticated:
@@ -114,7 +135,7 @@ def eco_waste_view(request):
         'waste_past_year': waste_past_year,
     }
 
-    return render(request, "ecowaste/impact-calculator.html", {'range': range})
+    return render(request, "ecowaste/impact-calculator.html", {'range': range}, context)
 
 def calculate_impact(food_data):
     """Calculate the total carbon footprint of consumed food items."""

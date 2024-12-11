@@ -1,9 +1,16 @@
-{% extends "ecowaste/base.html" %}
+{% extends "users/base_user.html" %}
 {% block content %}
-<div class="container">
-  <h2>You have been logged out!</h2>
-  <div class="border-top pt-3">
-    <a class="text-muted" href="{% url 'user-login' %}">Log back in here.</a>
-  </div>
+<link rel="stylesheet" href="{% static 'style.css'}">
+
+<div class="container mt-5">
+  <h1 class="page-title text-center mb-4">Logged Out</h1>
+      <div class="card">
+        <div class="card-body text-center">
+          <h2>You have been logged out!</h2>
+          <div class="border-top pt-3">
+            <a class="text-muted" href="{% url 'user-login' %}">Log back in here.</a>
+          </div>
+        </div>
+      </div>
 </div>
 {% endblock content %}

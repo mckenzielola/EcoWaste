@@ -1,7 +1,23 @@
 {% extends 'ecowaste/base.html' %} 
 
 {% block content %}
-<div class="container">
-    <h1>{{user.username}}</h1>
+<link rel="stylesheet" href="{% static 'style.css'}">
+<div class="container mt-5"> 
+    <h1>My Profile</h1> 
+    <div class="card"> 
+        <div class="card-body"> 
+            <h5 class="card-title">{{ user.username }}</h5> 
+            <p class="card-text"><strong>Email:</strong> {{ user.email }}</p> 
+            <!-- Profile Picture Update Form --> 
+             <form method="post" enctype="multipart/form-data"> 
+                {% csrf_token %} 
+                <div class="form-group"> 
+                    <label for="profile_picture">Update Profile Picture</label> 
+                    <input type="file" class="form-control-file" id="profile_picture" name="profile_picture"> 
+                </div> 
+                <button type="submit">Update Profile</button> 
+            </form> 
+        </div> 
+    </div> 
 </div>
 {% endblock content %}

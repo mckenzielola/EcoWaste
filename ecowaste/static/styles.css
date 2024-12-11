@@ -198,3 +198,31 @@ h1, h2 {
     text-align: center;
     margin-bottom: 1rem;
 }
+
+/* for home.html tables*/
+.table-hover tbody tr:hover {
+    background-color: #e8f5e9; /* Light green background on hover */
+}
+
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow to cards */
+    border-radius: 10px;
+}
+
+.card-header {
+    font-weight: 600;
+}
+
+.table th, .table td {
+    text-align: center; /* Center-align text in table cells */
+    vertical-align: middle;
+}
+
+/* Additional colors for table rows */
+.table-success tbody tr:nth-child(even) {
+    background-color: #d4edda; /* Light green for even rows */
+}
+
+.table-info tbody tr:nth-child(even) {
+    background-color: #d1ecf1; /* Light blue for even rows */
+}

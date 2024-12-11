@@ -49,7 +49,7 @@
         }
 
         function loadImpactData(type, range, elementId) {
-            fetch(`/calculate-impact/co2/${range}/`)
+            fetch(`/calculate-impact/${type}/${range}/`)
                 .then(response => response.json())
                 .then(data => {
                     document.querySelector(elementId).innerHTML = data.impact;
