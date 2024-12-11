@@ -41,7 +41,7 @@ class WasteItem(models.Model):
 class FoodDatabase: 
     # Carbon dioxide equivalent (CO₂e) emissions associated with the production of food per lbs  
     # Co2e unit is kg, should multiply 2.2 to convert it to lbs 
-    food_CarbonFootPrint_coefficients = { 
+    food_CarbonFootPrint_coef = { 
         "Beef": 27.0, 
         "Lamb": 39.0,
         "Chicken": 6.9,
@@ -205,7 +205,7 @@ class FoodDatabase:
     https://www.sciencedirect.com/science/article/abs/pii/S0924224423004028
     https://www.fao.org/platform-food-loss-waste/en/
     """
-    food_waste_coefficients = {
+    food_waste_coef = {
     # Meat 6
     "Beef": 100,
     "Lamb": 100,
@@ -383,8 +383,11 @@ class FoodDatabase:
     If the food item doesn't exist, return None.
     """
     @classmethod
-    def get_carbon_footprint(cls, food_name):
-        return cls.food_data.get(food_name)
+    def get_carbon_coef(cls, food_name):
+        return cls.food_CarbonFootPrint_coef.get(food_name)
+    @classmethod
+    def get_waste_coef(cls, food_name):
+        return cls.food_waste_coef.get(food_name)
 
 
 """
