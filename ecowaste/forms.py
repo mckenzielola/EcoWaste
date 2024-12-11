@@ -1,5 +1,6 @@
 from django import forms
 from .models import WasteItem
+from .models import Item
 
 class WasteItemForm(forms.ModelForm):
     # Food options (Name of Food and their Carbon Footprint)
@@ -77,3 +78,9 @@ class WasteItemForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+    
+# create a form for adding perishable items to freshness tracker
+class PerishableItemForm(forms.ModelForm):
+    class Meta:
+        model = Item
+        fields = ['perishable', 'quantity', 'expiration', 'category']

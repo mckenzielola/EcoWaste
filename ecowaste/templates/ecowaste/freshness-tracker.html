@@ -1,6 +1,42 @@
 {% extends 'ecowaste/base.html' %}
-
+{% load static %}
 {% block content %}
-<h1>EcoWaste App Freshness Tracker</h1>
+<link rel="stylesheet" href="{% static 'styles.css' %}">
 
+<!-- creates a form for perishableitems: forms.py-->
+<div class="container mt-5">
+    <h1 class="page-title text-center mb-4">EcoWaste Freshness Tracker</h1>
+    <p class="lead text-center">Keep track of Perishable Items to get the most out of your purchases.</p>
+    
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Perishable Item</button>
+    </form>
+</div>
+<div>
+
+    <!-- List of perishable items in table format--> 
+    <h2 class="mt-5">Your Perishable Items</h2> 
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Perishable Item</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Expiration Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <td>{{ item.perishable }}</td>
+                    <td>{{ item.category }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.expiration}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+ </div>
 {% endblock content %}

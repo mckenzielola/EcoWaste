@@ -1,15 +1,75 @@
 {% extends 'ecowaste/base.html' %}
-
+{% load static %}
 {% block content %}
-<h1>EcoWaste App Home</h1>
-{% for item in items %}
-<div class="card" style ="width:18rem;">
-    <div class="card-body">
-        <h5 class="card-perishable">{{ item.perishable }}</h5>
-        <h6 class="card-quantity mb-2 text-muted"> Quantity: {{ item.quantity }}</h5>
-        <h6 class="card-expiration mb-2 text-muted">{{item.expiration}}</h6>
-        <a href="#" class="card-link">View Perishable</a>
+<link rel="stylesheet" href="{% static 'style.css'}">
+
+<div class="container mt-5"> 
+    <h1 class="page-title text-center mb-4">EcoWaste Home</h1>
+    
+    <div class="row"> 
+        <!-- Freshness Tracker Items --> 
+         <div class="col-md-6"> 
+            <div="card border-success mb-3">
+                <div class="card-header">
+                    <h5>Freshness Tracker Items</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-hover table-striped"> 
+                    <thead class = "table-success"> 
+                        <tr> 
+                            <th>Item</th> 
+                            <th>Category</th> 
+                            <th>Quantity</th> 
+                            <th>Expiration Date</th> 
+                        </tr> 
+                    </thead> 
+                    <tbody> 
+                        <!-- iterate through item list of perishables from views -->
+                        {% for item in perishable_items %} 
+                            <tr> 
+                                <td>{{ item.perishable }}</td> 
+                                <td>{{ item.category }}</td> 
+                                <td>{{ item.quantity }}</td> 
+                                <td>{{ item.expiration }}</td> 
+                            </tr> 
+                        {% endfor %} 
+                    </tbody> 
+                </table> 
+            </div>
+        </div> 
     </div>
+        
+        <!-- Waste Tracker Items --> 
+        <div class="col-md-6"> 
+            <div="card border-info mb-3">
+                <div class="card-header">
+                    <h5>Waste Tracker Items</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-hover table-striped"> 
+                        <thead class="table-success"> 
+                            <tr> 
+                                <th>Item</th> 
+                                <th>Category</th> 
+                                <th>Quantity</th> 
+                                <th>Date Added</th> 
+                            </tr> 
+                        </thead> 
+                        <tbody> 
+                            <!-- iterate through item list of waste items from views -->
+                            {% for item in waste_items %} 
+                                <tr> 
+                                    <td>{{ item.name }}</td> 
+                                    <td>{{ item.category }}</td> 
+                                    <td>{{ item.quantity }}</td> 
+                                    <td>{{ item.date_added }}</td> 
+                                </tr> 
+                            {% endfor %} 
+                        </tbody> 
+                    </table> 
+                </div>
+            </div>
+        </div> 
+    </div> 
 </div>
-{% endfor %}
 {% endblock content %}

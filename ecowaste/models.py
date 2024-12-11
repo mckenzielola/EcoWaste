@@ -13,6 +13,7 @@ class Item(models.Model):
     # if user is deleted, delete all entries of db table related to the user
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     expiration = models.DateField()
+    category = models.CharField(max_length=50, default='Other')
 
 class WasteItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)

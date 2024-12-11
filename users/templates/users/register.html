@@ -1,19 +1,32 @@
-{% extends 'ecowaste/base.html' %} 
+{% extends 'ecowaste/base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
+
 {% block content %}
-<div class="container">
-    <form method="POST">
-        {% csrf_token %}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Sign Up!</legend>
-            {{ form|crispy }}
-        </fieldset>
-        <div class="form-group py-3">
-            <input class="btn btn-outline-primary" type="submit" value="Sign Up"/>
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+
+<div class="container mt-5">
+    <h1 class="page-title text-center mb-4">Sign Up for EcoWaste</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <fieldset class="form-group">
+                            <legend class="border-bottom mb-4">Sign Up</legend>
+                            {{ form|crispy }}
+                        </fieldset>
+                        <div class="form-group py-3">
+                            <input class="btn btn-primary btn-block" type="submit" value="Sign Up"/>
+                        </div>
+                    </form>
+                    <div class="border-top pt-3">
+                        <a href="{% url 'user-login' %}">Already have an account? Log in here</a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </form>
-    <div class="border-top pt-3">
-        <a href="{% url 'user-login' %}">Already have an account? Log in here!</a>
     </div>
 </div>
-{% endblock content %}
+{% endblock %}
