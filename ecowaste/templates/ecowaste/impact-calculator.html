@@ -2,8 +2,11 @@
 {% load static %} 
 
 <head>
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
-    <script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
         document.addEventListener("DOMContentLoaded", function () {
             const today = new Date();
             const lastWeek = new Date(today);
@@ -34,13 +37,18 @@
         });
 
         function handleTabClick(event) {
-            const activeTab = document.querySelector('.nav-link.active');
-            if (activeTab) activeTab.classList.remove('active');
+            // Prevent default behavior
+            event.preventDefault();
+
+            // Deactivate the current active tab
+            document.querySelector('.nav-link.active').classList.remove('active');
+            document.querySelector('.tab-pane.show').classList.remove('show', 'active');
+
+            // Activate the clicked tab
             event.target.classList.add('active');
 
+            // Show the corresponding tab content
             const targetId = event.target.getAttribute('data-bs-target');
-            const activeContent = document.querySelector('.tab-pane.show.active');
-            if (activeContent) activeContent.classList.remove('show', 'active');
             document.querySelector(targetId).classList.add('show', 'active');
 
             const tabName = targetId.split('-')[0]; 
@@ -57,23 +65,23 @@
                 .catch(error => console.error('Error loading impact data:', error));
         }
     </script>
+    
 </head>
 
 {% block content %}
 <div class="container mt-5">
     <ul class="nav nav-tabs" id="mainTabs" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="co2-tab" data-bs-toggle="tab" data-bs-target="#co2" type="button" role="tab">CO2 Footprint Calculator</button>
+            <button class="nav-link active" id="co2-tab" data-bs-toggle="tab" data-bs-target="#co2" type="button" role="tab">Food CO2 Footprint Calculator</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="waste-tab" data-bs-toggle="tab" data-bs-target="#waste" type="button" role="tab">Waste Calculator</button>
+            <button class="nav-link" id="waste-tab" data-bs-toggle="tab" data-bs-target="#waste" type="button" role="tab">Waste CO2 Footprint Calculator</button>
         </li>
     </ul>
 
     <div class="tab-content mt-3" id="mainTabsContent">
         <div class="tab-pane fade show active" id="co2" role="tabpanel">
             <ul class="nav nav-tabs" id="co2SubTabs" role="tablist">
-                <!-- CO2 Sub Tabs -->
                 <li class="nav-item">
                     <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#co2-past-week">Past Week</button>
                 </li>
@@ -90,18 +98,36 @@
                     <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-custom">Custom Range</button>
                 </li>
             </ul>
-            <div class="tab-content mt-3">
-                <div class="tab-pane fade show active" id="co2-past-week">
-                    <p id="co2-past-week-impact">Loading past week CO2 impact...</p>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div id="chart_div"></div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Total Food Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
+                        </p>
+                    </div>
+                    
                 </div>
                 <div class="tab-pane fade" id="co2-past-month">
-                    <p id="co2-past-month-impact">Loading past month CO2 impact...</p>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Total Food Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
+                        </p>
+                    </div>
                 </div>
                 <div class="tab-pane fade" id="co2-past-quarter">
-                    <p id="co2-past-quarter-impact">Loading past quarter CO2 impact...</p>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Total Food Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
+                        </p>
+                    </div>
                 </div>
                 <div class="tab-pane fade" id="co2-past-year">
-                    <p id="co2-past-year-impact">Loading past year CO2 impact...</p>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Total Food Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
+                        </p>
+                    </div>
                 </div>
                 <div class="tab-pane fade" id="co2-custom">
                     <form id="co2-custom-range-form">
@@ -111,14 +137,18 @@
                         <input type="date" id="co2-end-date" name="end_date" required>
                         <button type="submit" class="btn btn-primary mt-3">Calculate Custom CO2 Footprint</button>
                     </form>
-                    <p id="co2-custom-impact">Custom range CO2 impact will be displayed here.</p>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Total Food Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
         <!-- Waste Tab Content -->
         <div class="tab-pane fade" id="waste" role="tabpanel">
-            <p>Waste Calculator content...</p>
+            
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock %} 

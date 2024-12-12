@@ -11,21 +11,11 @@ urlpatterns = [
     path('delete_waste_item/<int:waste_item_id>/', views.delete_waste_item, name='delete_waste_item'),
     path('impact-calculator/', views.impact_calculator, name="ecowaste-impact-calculator"),
     
-    
     path('green-guides/', views.green_guides, name="ecowaste-green-guides"),
     path('green-guides/<int:id>/', views.article_detail, name='article-detail'),
-
-
-    # Impact Calculation URLs
-    path('calculate-impact/co2/<str:range>/', views.calculate_co2_impact, name='calculate_co2_impact'),
-    path('calculate-impact/waste/<str:range>/', views.calculate_waste_impact, name='calculate_waste_impact'),
-
-    # Custom Range Impact Calculation URLs
-    path('calculate-impact/co2/custom/', views.calculate_co2_impact, name='calculate_co2_impact_custom'),
-    path('calculate-impact/waste/custom/', views.calculate_waste_impact, name='calculate_waste_impact_custom'),
-
-    # General CO2 Impact Calculation
-    path('calculate_co2_impact/', views.calculate_co2_impact, name='calculate_co2_impact'),
+  
+    path('calculate-impact/<str:range_type>/', views.calculate_co2_impact, name='calculate_co2_impact'),
+    path('calculate-impact/co2/custom/<str:start_date>/<str:end_date>/', views.calculate_co2_impact, name='calculate_co2_custom_impact'),
 
 ]
 

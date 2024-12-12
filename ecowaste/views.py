@@ -110,70 +110,69 @@ def article_detail(request, id):
     article = Article.objects.get(pk=id)
     return render(request, "ecowaste/article-detail.html", {'article': article})
 
-def eco_waste_view(request):
+@login_required
+def calculate_co2_impact(request):
+    # Get the current user
     user = request.user
-
-    # Define the date ranges for the impact data
     today = timezone.now().date()
-    last_week = today - timedelta(days=7)
-    last_month = today - timedelta(days=30)
-    last_quarter = today - timedelta(days=90)
-    last_year = today - timedelta(days=365)
 
-    # Initialize the Impact calculator for the logged-in user
-    impact_calculator = ImpactCalculator(user)
-    
-    # Set date range for each category and calculate the impact
-    impact_calculator.set_date_range(last_week, today)
-    co2_past_week = calculate_impact(impact_calculator.get_food_data())
-    waste_past_week = calculate_waste_impact(impact_calculator.get_waste_data())
-
-    impact_calculator.set_date_range(last_month, today)
-    co2_past_month = calculate_impact(impact_calculator.get_food_data())
-    waste_past_month = calculate_waste_impact(impact_calculator.get_waste_data())
-
-    impact_calculator.set_date_range(last_quarter, today)
-    co2_past_quarter = calculate_impact(impact_calculator.get_food_data())
-    waste_past_quarter = calculate_waste_impact(impact_calculator.get_waste_data())
-
-    impact_calculator.set_date_range(last_year, today)
-    co2_past_year = calculate_impact(impact_calculator.get_food_data())
-    waste_past_year = calculate_waste_impact(impact_calculator.get_waste_data())
-
-    context = {
-        'co2_past_week': co2_past_week,
-        'waste_past_week': waste_past_week,
-        'co2_past_month': co2_past_month,
-        'waste_past_month': waste_past_month,
-        'co2_past_quarter': co2_past_quarter,
-        'waste_past_quarter': waste_past_quarter,
-        'co2_past_year': co2_past_year,
-        'waste_past_year': waste_past_year,
+    # Define time ranges
+    time_ranges = {
+        'past-week': (today - timedelta(days=7), today),
+        'past-month': (today - timedelta(weeks=4), today),
+        'past-quarter': (today - timedelta(weeks=12), today),
+        'past-year': (today - timedelta(weeks=52), today)
     }
 
-    return render(request, "ecowaste/impact-calculator.html", {'range': range}, context)
+    # Initialize results dictionary
+    impact_results = {}
 
-def calculate_impact(food_data):
-    """Calculate the total carbon footprint of consumed food items."""
-    total_impact = 0
-    for food_name, quantity in food_data:
-        carbon_footprint = FoodDatabase.get_carbon_footprint(food_name)
-        if carbon_footprint:
-            total_impact += carbon_footprint * quantity  # Assuming quantity is in kg
-    return total_impact
+    # Calculate impact for each time range
+    for range_name, (start_date, end_date) in time_ranges.items():
+        # Create Impact Calculator
+        impact_calculator = ImpactCalculator(user, (start_date, end_date))
+        
+        # Get food and waste data
+        food_data = impact_calculator.get_food_data()
+        waste_data = impact_calculator.get_waste_data()
+        
+        # Calculate food impact
+        food_impact = 0
+        food_details = []
+        for food, quantity in food_data:
+            carbon_coef = FoodDatabase.get_carbon_coef(food)
+            if carbon_coef:
+                # Convert quantity to pounds
+                weight_in_pounds = quantity * 2.20462
+                food_impact += round(carbon_coef * weight_in_pounds, 3)
+                food_details.append({
+                    'name': food,
+                    'quantity': quantity,
+                    'carbon_impact': round(carbon_coef * weight_in_pounds, 3)
+                })
+        print(food_impact)
+        
+        # Calculate waste impact
+        waste_impact = 0
+        waste_details = []
+        for waste_item in waste_data:
+            carbon_coef = FoodDatabase.get_waste_coef(waste_item.name)
+            if carbon_coef:
+                waste_impact += round(carbon_coef * waste_item.quantity, 3)
+                waste_details.append({
+                    'name': waste_item.name,
+                    'quantity': waste_item.quantity,
+                    'carbon_impact': round(carbon_coef * waste_item.quantity, 3)
+                })
+        print(waste_impact)
+        # Store results for this time range
+        impact_results[range_name] = {
+            'food_impact': food_impact,
+            'waste_impact': waste_impact,
+        }
 
-def calculate_waste_impact(waste_data):
-    """Calculate the total waste impact."""
-    total_waste = 0
-    for waste_item in waste_data:
-        # Assuming quantity is in kilograms (or appropriate unit), adjust calculation as needed
-        total_waste += float(waste_item.quantity)
-    return total_waste
-
-def calculate_co2_impact(request, range):
-    # Your logic for CO2 calculation here
-    return render(request, 'ecowaste/impact_result.html', {'range': range})
-
-def calculate_waste_impact(request, range):
-    # Your logic for waste calculation here
-    return render(request, 'ecowaste/impact_result.html', {'range': range})
+    # Render template with results
+    return render(request, 'ecowaste/impact-calculator.html', {
+        'total_food_impact': sum(results['food_impact'] for results in impact_results.values()),
+        'total_waste_impact': sum(results['waste_impact'] for results in impact_results.values())
+    })
