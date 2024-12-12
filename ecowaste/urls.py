@@ -14,7 +14,8 @@ urlpatterns = [
     path('green-guides/', views.green_guides, name="ecowaste-green-guides"),
     path('green-guides/<int:id>/', views.article_detail, name='article-detail'),
   
-    path('calculate-impact/<str:range_type>/', views.calculate_co2_impact, name='calculate_co2_impact'),
+   
+    path('calculate-impact/<str:type>/<str:range>/', views.calculate_co2_impact, name='calculate_co2_range'),
     path('calculate-impact/co2/custom/<str:start_date>/<str:end_date>/', views.calculate_co2_impact, name='calculate_co2_custom_impact'),
 
 ]

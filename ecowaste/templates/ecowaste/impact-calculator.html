@@ -65,7 +65,26 @@
                 .catch(error => console.error('Error loading impact data:', error));
         }
     </script>
+    <script>
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
     
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['wen', 'Hours per Day'],
+                ['thu',     11],
+                ['fri',      2],
+                ['sat',    7]
+            ]);
+    
+            var options = {
+                title: 'CO2 Impact (Kg CO2)'
+            };
+    
+            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+    </script>
 </head>
 
 {% block content %}
@@ -103,7 +122,7 @@
                     <div id="chart_div"></div>
                     <div class="card-body">
                         <p class="card-text">
-                            Total Food Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
+                            Total Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
                         </p>
                     </div>
                     
@@ -111,21 +130,21 @@
                 <div class="tab-pane fade" id="co2-past-month">
                     <div class="card-body">
                         <p class="card-text">
-                            Total Food Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
+                            Total Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
                         </p>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="co2-past-quarter">
                     <div class="card-body">
                         <p class="card-text">
-                            Total Food Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
+                            Total Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
                         </p>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="co2-past-year">
                     <div class="card-body">
                         <p class="card-text">
-                            Total Food Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
+                            Total Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
                         </p>
                     </div>
                 </div>
@@ -139,7 +158,7 @@
                     </form>
                     <div class="card-body">
                         <p class="card-text">
-                            Total Food Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
+                            Total Impact: {{ total_food_impact|floatformat:2 }} (kg CO2)
                         </p>
                     </div>
                 </div>
@@ -147,69 +166,7 @@
         </div>
         <!-- Waste Tab Content -->
         <div class="tab-pane fade" id="waste" role="tabpanel">
-            <ul class="nav nav-tabs" id="co2SubTabs" role="tablist">
-                <li class="nav-item">
-                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#co2-past-week">Past Week</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-past-month">Past Month</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-past-quarter">Past Quarter</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-past-year">Past Year</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-custom">Custom Range</button>
-                </li>
-            </ul>
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    <div id="chart_div"></div>
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Food Impact: {{ total_waste_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                    
-                </div>
-                <div class="tab-pane fade" id="co2-past-month">
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Food Impact: {{ total_waste_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="co2-past-quarter">
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Food Impact: {{ total_waste_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="co2-past-year">
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Food Impact: {{ total_waste_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="co2-custom">
-                    <form id="co2-custom-range-form">
-                        <label for="co2-start-date">Start Date:</label>
-                        <input type="date" id="co2-start-date" name="start_date" required>
-                        <label for="co2-end-date">End Date:</label>
-                        <input type="date" id="co2-end-date" name="end_date" required>
-                        <button type="submit" class="btn btn-primary mt-3">Calculate Custom CO2 Footprint</button>
-                    </form>
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Food Impact: {{ total_waste_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                </div>
-            </div>
+            
         </div>
     </div>
 </div>

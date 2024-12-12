@@ -110,8 +110,7 @@ def article_detail(request, id):
     article = Article.objects.get(pk=id)
     return render(request, "ecowaste/article-detail.html", {'article': article})
 
-@login_required
-def calculate_co2_impact(request):
+def calculate_co2_impact(request, range_type=None, start_date=None, end_date=None):
     # Get the current user
     user = request.user
     today = timezone.now().date()
@@ -124,55 +123,61 @@ def calculate_co2_impact(request):
         'past-year': (today - timedelta(weeks=52), today)
     }
 
-    # Initialize results dictionary
-    impact_results = {}
+    # Determine the date range to calculate
+    if range_type in time_ranges:
+        start_date, end_date = time_ranges[range_type]
+    elif start_date and end_date:
+        try:
+            start_date = timezone.datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = timezone.datetime.strptime(end_date, "%Y-%m-%d").date()
+        except ValueError:
+            return HttpResponse("Invalid date format. Use YYYY-MM-DD.", status=400)
+    else:
+        return HttpResponse("Invalid range type or missing dates.", status=400)
 
-    # Calculate impact for each time range
-    for range_name, (start_date, end_date) in time_ranges.items():
-        # Create Impact Calculator
-        impact_calculator = ImpactCalculator(user, (start_date, end_date))
-        
-        # Get food and waste data
-        food_data = impact_calculator.get_food_data()
-        waste_data = impact_calculator.get_waste_data()
-        
-        # Calculate food impact
-        food_impact = 0
-        food_details = []
-        for food, quantity in food_data:
-            carbon_coef = FoodDatabase.get_carbon_coef(food)
-            if carbon_coef:
-                # Convert quantity to pounds
-                weight_in_pounds = quantity * 2.20462
-                food_impact += round(carbon_coef * weight_in_pounds, 3)
-                food_details.append({
-                    'name': food,
-                    'quantity': quantity,
-                    'carbon_impact': round(carbon_coef * weight_in_pounds, 3)
-                })
-        print(food_impact)
-        
-        # Calculate waste impact
-        waste_impact = 0
-        waste_details = []
-        for waste_item in waste_data:
-            carbon_coef = FoodDatabase.get_waste_coef(waste_item.name)
-            if carbon_coef:
-                waste_impact += round(carbon_coef * waste_item.quantity, 3)
-                waste_details.append({
-                    'name': waste_item.name,
-                    'quantity': waste_item.quantity,
-                    'carbon_impact': round(carbon_coef * waste_item.quantity, 3)
-                })
-        print(waste_impact)
-        # Store results for this time range
-        impact_results[range_name] = {
-            'food_impact': food_impact,
-            'waste_impact': waste_impact,
-        }
+    # Create Impact Calculator
+    impact_calculator = ImpactCalculator(user, (start_date, end_date))
+    foodList = Item.objects.filter(user=request.user)
+    wastList = WasteItem.objects.filter(user=request.user)
+
+    # Calculate food impact
+    food_impact = 0
+    food_details = []
+    for food, quantity, category in foodList:
+        carbon_coef = FoodDatabase.get_carbon_coef(food)
+        if carbon_coef:
+            # Convert quantity to pounds
+            weight_in_pounds = quantity * 2.20462
+            food_impact += round(carbon_coef * weight_in_pounds, 3)
+            food_details.append({
+                'name': food,
+                'quantity': quantity,
+                'carbon_impact': round(carbon_coef * weight_in_pounds, 3),
+                'Category': category
+            })
+
+    # Calculate waste impact
+    waste_impact = 0
+    waste_details = []
+    for waste_item in wastList:
+        carbon_coef = FoodDatabase.get_waste_coef(waste_item.name)
+        if carbon_coef:
+            waste_impact += round(carbon_coef * waste_item.quantity, 3)
+            waste_details.append({
+                'name': waste_item.name,
+                'quantity': waste_item.quantity,
+                'carbon_impact': round(carbon_coef * waste_item.quantity, 3),
+                'Category': waste_item.category
+            })
+
+    # Log the results
+    print(f"Food Impact ({start_date} to {end_date}):", food_impact)
+    print(f"Waste Impact ({start_date} to {end_date}):", waste_impact)
 
     # Render template with results
     return render(request, 'ecowaste/impact-calculator.html', {
-        'total_food_impact': sum(results['food_impact'] for results in impact_results.values()),
-        'total_waste_impact': sum(results['waste_impact'] for results in impact_results.values())
+        'total_food_impact': food_impact,
+        'total_waste_impact': waste_impact,
+        'start_date': start_date,
+        'end_date': end_date,
     })
