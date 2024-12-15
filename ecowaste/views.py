@@ -111,6 +111,7 @@ def article_detail(request, id):
     return render(request, "ecowaste/article-detail.html", {'article': article})
 
 
+
 def calculate_co2_impact(request):
     # Ensure user is authenticated
     if not request.user.is_authenticated:
@@ -162,10 +163,10 @@ def calculate_co2_impact(request):
             coef = float(carbon_coef)
             quantity = float(waste_item.quantity)
             waste_impact = round(coef * quantity * gram_to_kg, 2)
-            waste_impactList[time] = waste_impactList.get(time, 0) + waste_impact
+            waste_impactList[time] = round(waste_impactList.get(time, 0) + waste_impact,2)
 
             category = get_waste_item_category(waste_item.name)
-            food_categories[category] = food_categories.get(category, 0) + waste_impact
+            food_categories[category] = round(food_categories.get(category, 0) + waste_impact,2)
 
     # Combine both food and waste impacts and compute cumulative daily totals
     period = sorted(set(food_impactList.keys()).union(set(waste_impactList.keys())))
@@ -179,7 +180,7 @@ def calculate_co2_impact(request):
         current_total = food_impact + waste_impact
         
         cumulative_total += current_total
-        total_impactList[time] = cumulative_total
+        total_impactList[time] = round(cumulative_total,2)
             
     return JsonResponse({
         'food_categories': food_categories,
