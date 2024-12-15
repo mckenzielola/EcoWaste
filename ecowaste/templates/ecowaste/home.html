@@ -1,7 +1,7 @@
 {% extends 'ecowaste/base.html' %}
 {% load static %}
 {% block content %}
-<link rel="stylesheet" href="{% static 'style.css'}">
+<link rel="stylesheet" href="{% static 'styles.css' %}">
 
 <div class="container mt-5"> 
     <h1 class="page-title text-center mb-4">EcoWaste Home</h1>
@@ -19,7 +19,8 @@
                         <tr> 
                             <th>Item</th> 
                             <th>Category</th> 
-                            <th>Quantity</th> 
+                            <th>Quantity</th>
+                            <th>Date Added</th>
                             <th>Expiration Date</th> 
                         </tr> 
                     </thead> 
@@ -30,6 +31,7 @@
                                 <td>{{ item.perishable }}</td> 
                                 <td>{{ item.category }}</td> 
                                 <td>{{ item.quantity }}</td> 
+                                 <td>{{ item.date_added }}</td>
                                 <td>{{ item.expiration }}</td> 
                             </tr> 
                         {% endfor %} 

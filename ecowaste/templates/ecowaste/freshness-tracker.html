@@ -24,6 +24,7 @@
                 <th>Perishable Item</th>
                 <th>Category</th>
                 <th>Quantity</th>
+                <th>Date Added</th>
                 <th>Expiration Date</th>
             </tr>
         </thead>
@@ -33,6 +34,7 @@
                     <td>{{ item.perishable }}</td>
                     <td>{{ item.category }}</td>
                     <td>{{ item.quantity }}</td>
+                    <td>{{ item.date_added }}</td>
                     <td>{{ item.expiration}}</td>
                 </tr>
             {% endfor %}
