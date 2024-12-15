@@ -1,18 +1,18 @@
 import json
-from django.http import JsonResponse
+import random
 from django.shortcuts import render, redirect
-from . import models
 from .models import FoodDatabase, ImpactCalculator, WasteItem, Item
 from .forms import WasteItemForm, PerishableItemForm
 from django.shortcuts import render
-from datetime import datetime, timedelta, timezone
 from .models import Article
 from django.shortcuts import get_object_or_404
-from django.core.files.storage import FileSystemStorage
-from django.http import FileResponse
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
 from django.db.models import Count
+from django.utils import timezone
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from datetime import datetime, timedelta
+from .forms import WasteItemForm
+from dateutil.parser import parse as parse_date
 
 @login_required
 def home(request):
@@ -110,74 +110,95 @@ def article_detail(request, id):
     article = Article.objects.get(pk=id)
     return render(request, "ecowaste/article-detail.html", {'article': article})
 
-def calculate_co2_impact(request, range_type=None, start_date=None, end_date=None):
-    # Get the current user
+
+
+def calculate_co2_impact(request):
+    # Ensure user is authenticated
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'User not authenticated'}, status=401)
+
+    # Use the authenticated user
     user = request.user
-    today = timezone.now().date()
+    period = request.GET.get('period')
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
 
-    # Define time ranges
-    time_ranges = {
-        'past-week': (today - timedelta(days=7), today),
-        'past-month': (today - timedelta(weeks=4), today),
-        'past-quarter': (today - timedelta(weeks=12), today),
-        'past-year': (today - timedelta(weeks=52), today)
-    }
+    # Validate date inputs
+    try:
+        start_date = parse_date(start_date_str)
+        end_date = parse_date(end_date_str)
+    except ValueError:
+        return JsonResponse({"error": "Invalid date format. Use YYYY-MM-DD."}, status=400)
 
-    # Determine the date range to calculate
-    if range_type in time_ranges:
-        start_date, end_date = time_ranges[range_type]
-    elif start_date and end_date:
-        try:
-            start_date = timezone.datetime.strptime(start_date, "%Y-%m-%d").date()
-            end_date = timezone.datetime.strptime(end_date, "%Y-%m-%d").date()
-        except ValueError:
-            return HttpResponse("Invalid date format. Use YYYY-MM-DD.", status=400)
-    else:
-        return HttpResponse("Invalid range type or missing dates.", status=400)
+    if not start_date or not end_date:
+        return JsonResponse({"error": "Invalid range type or missing dates."}, status=400)
 
-    # Create Impact Calculator
-    impact_calculator = ImpactCalculator(user, (start_date, end_date))
-    foodList = Item.objects.filter(user=request.user)
-    wastList = WasteItem.objects.filter(user=request.user)
-
-    # Calculate food impact
-    food_impact = 0
-    food_details = []
-    for food, quantity, category in foodList:
-        carbon_coef = FoodDatabase.get_carbon_coef(food)
+    gram_to_kg = 0.001
+    food_impactList = {}
+    waste_impactList = {}
+    total_impactList = {}
+    food_categories = {}
+    print('food')
+    # Calculate food impact by time
+    food_list = Item.objects.filter(author=user, date_added__range=[start_date, end_date])
+    for food in food_list:
+        time = food.date_added.strftime('%Y-%m-%d') if period == "past-month" else food.date_added.strftime('%Y-%m')
+        carbon_coef = FoodDatabase.get_carbon_coef(food.perishable)
         if carbon_coef:
-            # Convert quantity to pounds
-            weight_in_pounds = quantity * 2.20462
-            food_impact += round(carbon_coef * weight_in_pounds, 3)
-            food_details.append({
-                'name': food,
-                'quantity': quantity,
-                'carbon_impact': round(carbon_coef * weight_in_pounds, 3),
-                'Category': category
-            })
-
-    # Calculate waste impact
-    waste_impact = 0
-    waste_details = []
-    for waste_item in wastList:
+            coef = float(carbon_coef)
+            quantity = float(food.quantity)
+            food_impact = round(coef * quantity * gram_to_kg, 2)
+            food_impactList[time] = food_impactList.get(time, 0) + food_impact
+            
+            # Add impact to category total
+            category = get_waste_item_category(food.perishable)
+            print(time)
+            print(category)
+            food_categories[category] = food_categories.get(category, 0) + food_impact
+            print(food_categories[category])
+    print('waste')
+    # Calculate waste impact by time
+    waste_list = WasteItem.objects.filter(user=user, date_added__range=[start_date, end_date])
+    for waste_item in waste_list:
+        time = waste_item.date_added.strftime('%Y-%m-%d') if period == "past-month" else waste_item.date_added.strftime('%Y-%m')
         carbon_coef = FoodDatabase.get_waste_coef(waste_item.name)
         if carbon_coef:
-            waste_impact += round(carbon_coef * waste_item.quantity, 3)
-            waste_details.append({
-                'name': waste_item.name,
-                'quantity': waste_item.quantity,
-                'carbon_impact': round(carbon_coef * waste_item.quantity, 3),
-                'Category': waste_item.category
-            })
+            coef = float(carbon_coef)
+            quantity = float(waste_item.quantity)
+            waste_impact = round(coef * quantity * gram_to_kg, 2)
+            waste_impactList[time] = waste_impactList.get(time, 0) + waste_impact
 
-    # Log the results
-    print(f"Food Impact ({start_date} to {end_date}):", food_impact)
-    print(f"Waste Impact ({start_date} to {end_date}):", waste_impact)
+            print(time)
+            print(category)
+            food_categories[category] = food_categories.get(category, 0) + waste_impact
+            print(food_categories[category])
 
-    # Render template with results
-    return render(request, 'ecowaste/impact-calculator.html', {
-        'total_food_impact': food_impact,
-        'total_waste_impact': waste_impact,
+    # Combine both food and waste impacts and compute cumulative daily totals
+    period = sorted(set(food_impactList.keys()).union(set(waste_impactList.keys())))
+
+    total_impactList = {}
+    cumulative_total = 0
+
+    for time in period:
+        food_impact = food_impactList.get(time, 0)
+        waste_impact = waste_impactList.get(time, 0)
+        current_total = food_impact + waste_impact
+        
+        cumulative_total += current_total
+        total_impactList[time] = cumulative_total
+            
+    return JsonResponse({
+        'food_categories': food_categories,
+        'total_impactList': total_impactList,
+        'food_impactList': food_impactList,
+        'waste_impactList': waste_impactList,
         'start_date': start_date,
         'end_date': end_date,
     })
+
+def get_waste_item_category(waste_item_name):
+    # Iterate through the food categories
+    for category, items in WasteItemForm.FOOD_CATEGORIES:
+        if waste_item_name in items:
+            return category
+    return "Uncategorized"  # Return 'Uncategorized' if not found

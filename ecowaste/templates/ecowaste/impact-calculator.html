@@ -1,235 +1,215 @@
 {% extends 'ecowaste/base.html' %}
-{% load static %} 
-
-<head>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
-        document.addEventListener("DOMContentLoaded", function () {
-            const today = new Date();
-            const lastWeek = new Date(today);
-            lastWeek.setDate(today.getDate() - 7);
-            
-            // Initialize date values for custom range
-            document.getElementById("co2-start-date").value = lastWeek.toISOString().split("T")[0];
-            document.getElementById("co2-end-date").value = today.toISOString().split("T")[0];
-
-            loadImpactData("co2", "past-week", "#co2-past-week-impact");
-            loadImpactData("co2", "past-month", "#co2-past-month-impact");
-            loadImpactData("co2", "past-quarter", "#co2-past-quarter-impact");
-            loadImpactData("co2", "past-year", "#co2-past-year-impact");
-            
-            document.querySelectorAll('.nav-link').forEach(function(tab) {
-                tab.addEventListener('click', function(event) {
-                    handleTabClick(event);
-                });
-            });
-
-            // Listen for custom range form submission
-            document.getElementById("co2-custom-range-form").addEventListener("submit", function(event) {
-                event.preventDefault();
-                const startDate = document.getElementById("co2-start-date").value;
-                const endDate = document.getElementById("co2-end-date").value;
-                loadImpactData("co2", `custom/${startDate}/${endDate}`, "#co2-custom-impact");
-            });
-        });
-
-        function handleTabClick(event) {
-            // Prevent default behavior
-            event.preventDefault();
-
-            // Deactivate the current active tab
-            document.querySelector('.nav-link.active').classList.remove('active');
-            document.querySelector('.tab-pane.show').classList.remove('show', 'active');
-
-            // Activate the clicked tab
-            event.target.classList.add('active');
-
-            // Show the corresponding tab content
-            const targetId = event.target.getAttribute('data-bs-target');
-            document.querySelector(targetId).classList.add('show', 'active');
-
-            const tabName = targetId.split('-')[0]; 
-            const range = targetId.split('-')[1]; 
-            loadImpactData(tabName, range, `#${tabName}-${range}-impact`);
-        }
-
-        function loadImpactData(type, range, elementId) {
-            fetch(`/calculate-impact/${type}/${range}/`)
-                .then(response => response.json())
-                .then(data => {
-                    document.querySelector(elementId).innerHTML = data.impact;
-                })
-                .catch(error => console.error('Error loading impact data:', error));
-        }
-    </script>
-    <script>
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
-    
-        function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-                ['wen', 'Hours per Day'],
-                ['thu',     11],
-                ['fri',      2],
-                ['sat',    7]
-            ]);
-    
-            var options = {
-                title: 'CO2 Impact (Kg CO2)'
-            };
-    
-            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-            chart.draw(data, options);
-        }
-    </script>
-</head>
+{% load static %}
 
 {% block content %}
-<div class="container mt-5">
-    <ul class="nav nav-tabs" id="mainTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="co2-tab" data-bs-toggle="tab" data-bs-target="#co2" type="button" role="tab">Food CO2 Footprint Calculator</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="waste-tab" data-bs-toggle="tab" data-bs-target="#waste" type="button" role="tab">Waste CO2 Footprint Calculator</button>
-        </li>
-    </ul>
 
-    <div class="tab-content mt-3" id="mainTabsContent">
-        <div class="tab-pane fade show active" id="co2" role="tabpanel">
-            <ul class="nav nav-tabs" id="co2SubTabs" role="tablist">
-                <li class="nav-item">
-                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#co2-past-week">Past Week</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-past-month">Past Month</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-past-quarter">Past Quarter</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-past-year">Past Year</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-custom">Custom Range</button>
-                </li>
-            </ul>
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    <div id="chart_div"></div>
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Impact: {{ food_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                    
-                </div>
-                <div class="tab-pane fade" id="co2-past-month">
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Impact: {{ food_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="co2-past-quarter">
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Impact: {{ food_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="co2-past-year">
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Impact: {{ food_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="co2-custom">
-                    <form id="co2-custom-range-form">
-                        <label for="co2-start-date">Start Date:</label>
-                        <input type="date" id="co2-start-date" name="start_date" required>
-                        <label for="co2-end-date">End Date:</label>
-                        <input type="date" id="co2-end-date" name="end_date" required>
-                        <button type="submit" class="btn btn-primary mt-3">Calculate Custom CO2 Footprint</button>
-                    </form>
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Impact: {{ food_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                </div>
-            </div>
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+<div style="text-align: center; margin-top: 20px; margin-bottom: 10px;">
+    <h2 style="font-weight: bold; color: #006400;">Food And Waste Carbon Footprint:</h2>
+
+    <div style="margin-top: 20px;">
+        <ul class="nav nav-tabs" id="periodSubTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="past-month" href="past-month">This Month</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="past-quarter" href="past-quarter">Past Quarter</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="past-year" href="past-year">Past Year</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="custom" href="custom">Custom Range</button>
+            </li>
+        </ul>
+    </div>
+
+    <div id="charts" style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div style="flex: 1; width: 40%; margin-right: 20px;">
+            <div id="area-chart" style="width: 100%; height: 150px;"></div>
+            <div id="pie-chart" style="width: 100%; height: 400px;"></div>
         </div>
-        <!-- Waste Tab Content -->
-        <div class="tab-pane fade" id="waste" role="tabpanel">
-            <ul class="nav nav-tabs" id="co2SubTabs" role="tablist">
-                <li class="nav-item">
-                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#co2-past-week">Past Week</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-past-month">Past Month</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-past-quarter">Past Quarter</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-past-year">Past Year</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#co2-custom">Custom Range</button>
-                </li>
-            </ul>
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    <div id="chart_div"></div>
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Impact: {{ food_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                    
-                </div>
-                <div class="tab-pane fade" id="co2-past-month">
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Impact: {{ food_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="co2-past-quarter">
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Impact: {{ food_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="co2-past-year">
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Impact: {{ food_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="co2-custom">
-                    <form id="co2-custom-range-form">
-                        <label for="co2-start-date">Start Date:</label>
-                        <input type="date" id="co2-start-date" name="start_date" required>
-                        <label for="co2-end-date">End Date:</label>
-                        <input type="date" id="co2-end-date" name="end_date" required>
-                        <button type="submit" class="btn btn-primary mt-3">Calculate Custom CO2 Footprint</button>
-                    </form>
-                    <div class="card-body">
-                        <p class="card-text">
-                            Total Impact: {{ food_impact|floatformat:2 }} (kg CO2)
-                        </p>
-                    </div>
-                </div>
+
+        <div style="flex: 2; margin-left: 20px;">
+            <div id="date-selection" style="display: none; margin-bottom: 10px; align-items: center;">
+                <label for="start-date" style="margin-right: 10px;">Start Date:</label>
+                <input type="date" id="start-date" />
+                <label for="end-date" style="margin-left: 20px; margin-right: 10px;">End Date:</label>
+                <input type="date" id="end-date" />
             </div>
+            <div id="chart" style="width: 100%; height: 400px;"></div>
         </div>
     </div>
-</div>
-{% endblock %} 
+
+    <!-- Tab content for each tab -->
+    <div class="tab-period">
+        <div class="tab-pane fade show active" id="period-month" role="tabpanel">
+            <div class="value" id="carbonValue"></div>
+        </div>
+        <div class="tab-pane fade" id="period-quarter" role="tabpanel">
+            <div class="value" id="carbonValue"></div>
+        </div>
+        <div class="tab-pane fade" id="period-year" role="tabpanel">
+            <div class="value" id="carbonValue"></div>
+        </div>
+        <div class="tab-pane fade" id="period-custom" role="tabpanel">
+            <div class="value" id="carbonValue"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const periodSubTabsContainer = document.querySelector('#periodSubTabs');
+            const startDateInput = document.getElementById('start-date');
+            const endDateInput = document.getElementById('end-date');
+            const dateSelectionContainer = document.getElementById('date-selection');
+            const today = new Date().toISOString().split('T')[0];
+            const firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+
+            // Set default values for date inputs
+            startDateInput.value = firstDayOfMonth;
+            endDateInput.value = today;
+
+            if (periodSubTabsContainer) {
+                const tabs = periodSubTabsContainer.querySelectorAll('.nav-link');
+                let barChart, areaChart, pieChart; // Variables to store the chart instances
+
+                // Event listener for tab clicks
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', function (e) {
+                        e.preventDefault();
+
+                        // Remove active class from all tabs
+                        periodSubTabsContainer.querySelectorAll('.nav-link.active').forEach(activeTab => {
+                            activeTab.classList.remove('active');
+                        });
+                        this.classList.add('active');
+
+                        // Hide all tab contents
+                        periodSubTabsContainer.querySelectorAll('.tab-pane').forEach(content => {
+                            content.classList.remove('show', 'active');
+                        });
+
+                        const periodName = this.getAttribute('data-bs-target'); // e.g., 'past-month', 'past-quarter'
+
+                        // Show date selection only for 'custom' tab
+                        if (periodName === 'custom') {
+                            dateSelectionContainer.style.display = 'flex';
+                        } else {
+                            dateSelectionContainer.style.display = 'none';
+                        }
+
+                        const targetContent = periodSubTabsContainer.querySelector(`#period-${periodName}`);
+                        if (targetContent) {
+                            targetContent.classList.add('show', 'active');
+                        }
+
+                        // Determine the selected period and construct the query string
+                        let start_date = '';
+                        let end_date = today;
+
+                        if (periodName === 'past-month') {
+                            start_date = firstDayOfMonth;
+                        } else if (periodName === 'past-quarter') {
+                            const threeMonthsAgo = new Date();
+                            threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                            start_date = new Date(threeMonthsAgo.getFullYear(), threeMonthsAgo.getMonth(), 1).toISOString().split('T')[0];
+                        } else if (periodName === 'past-year') {
+                            start_date = new Date(new Date().getFullYear() - 1, new Date().getMonth(), 1).toISOString().split('T')[0];
+                        } else if (periodName === 'custom') {
+                            start_date = startDateInput.value;
+                            end_date = endDateInput.value;
+                        }
+
+                        // Construct the URL with the period name and optional date ranges
+                        const url = `/impact-calculator?period=${periodName}&start_date=${start_date}&end_date=${end_date}`;
+
+                        // Fetch data from the server
+                        fetch(url)
+                            .then(response => response.json())
+                            .then(data => {
+                                updateCharts(data); // Function to update the charts
+                            })
+                            .catch(error => console.error('Error fetching data:', error));
+                    });
+                });
+
+                // Date input change listener
+                [startDateInput, endDateInput].forEach(input => {
+                    input.addEventListener('change', () => {
+                        const startDate = new Date(startDateInput.value);
+                        const endDate = new Date(endDateInput.value);
+
+                        if (startDate > endDate) {
+                            startDateInput.value = endDateInput.value;
+                        }
+
+                        const url = `/impact-calculator?period=custom&start_date=${startDateInput.value}&end_date=${endDateInput.value}`;
+
+                        fetch(url)
+                            .then(response => response.json())
+                            .then(data => {
+                                updateCharts(data);
+                            })
+                            .catch(error => console.error('Error fetching data:', error));
+                    });
+                });
+
+                // Function to update charts
+                function updateCharts(data) {
+                    // Destroy old charts if they exist
+                    if (barChart) barChart.destroy();
+                    if (areaChart) areaChart.destroy();
+                    if (pieChart) pieChart.destroy();
+
+                    const months = Object.keys(data.total_impactList);
+                    const foodData = months.map(month => data.food_impactList[month] || 0);
+                    const wasteData = months.map(month => data.waste_impactList[month] || 0);
+
+                    // Bar chart options
+                    const barOptions = {
+                        series: [
+                            { name: 'Food', data: foodData },
+                            { name: 'Waste', data: wasteData }
+                        ],
+                        chart: { type: 'bar', height: 350, stacked: true },
+                        xaxis: { categories: months }
+                    };
+                    barChart = new ApexCharts(document.querySelector('#chart'), barOptions);
+                    barChart.render();
+
+                    // Area chart options
+                    const areaOptions = {
+                        series: [{ data: Object.values(data.total_impactList) }],
+                        chart: { type: 'area', height: 150, sparkline: { enabled: true } },
+                        title: { text: `Your CO2 Footprint: ${Object.values(data.total_impactList).slice(-1)[0]} Kg CO2`, align: 'center' }
+                    };
+                    areaChart = new ApexCharts(document.querySelector('#area-chart'), areaOptions);
+                    areaChart.render();
+
+                    // Pie chart options
+                    const categoryKeys = Object.keys(data.food_categories);
+                    const categoryData = Object.values(data.food_categories);
+                    const pieOptions = {
+                        series: categoryData,
+                        labels: categoryKeys,
+                        chart: { type: 'pie', height: 400 }
+                    };
+                    pieChart = new ApexCharts(document.querySelector('#pie-chart'), pieOptions);
+                    pieChart.render();
+                }
+
+                // Initialize with default period data on page load
+                const defaultPeriod = 'past-month';
+                const url = `/impact-calculator?period=${defaultPeriod}&start_date=${firstDayOfMonth}&end_date=${today}`;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        updateCharts(data);
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+        });
+    </script>
+{% endblock %}

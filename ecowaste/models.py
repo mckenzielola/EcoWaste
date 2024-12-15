@@ -2,11 +2,7 @@ from django.db import models
 # to link atrributes to user
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from django.utils import timezone
-from datetime import timedelta
-from datetime import datetime, timedelta
 
-# Create your models here.
 class Item(models.Model):
     perishable = models.CharField(max_length=100)
     quantity = models.PositiveIntegerField()
@@ -14,6 +10,9 @@ class Item(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     expiration = models.DateField()
     category = models.CharField(max_length=50, default='Other')
+    date_added = models.DateField(auto_now_add=True)
+    def __str__(self):
+            return f"{self.perishable} (Quantity: {self.quantity}, Expiration: {self.expiration}, Category: {self.category}, Date: {self.date_added})"
 
 class WasteItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -22,25 +21,16 @@ class WasteItem(models.Model):
     quantity = models.PositiveIntegerField()
     date_added = models.DateField(auto_now_add=True)
 
-    def __str__(self):
-        return f"{self.name} ({self.category})"
     
-# create dunder string method
     def __str__(self):
-        return self.perishable    
-    """
-    Convert CO₂e from kilograms to pounds.
-    """
-    def convert_kg_to_lbs(kg):
-        kg_to_lbs = 2.20462
-        return kg * kg_to_lbs
-    
+         return f"{self.name} (Quantity: {self.quantity}, Category: {self.category}, Date: {self.date_added})"   
+
+    # Carbon dioxide equivalent (CO₂e) emissions associated with the production of food per lbs  
+    # Co2e unit is kg, should multiply 2.2 to convert it to lbs     
 """ A class to store and retrieve food carbon footprints from a predefined database.
     The food items and their carbon footprints are stored as a dictionary.
 """        
 class FoodDatabase: 
-    # Carbon dioxide equivalent (CO₂e) emissions associated with the production of food per lbs  
-    # Co2e unit is kg, should multiply 2.2 to convert it to lbs 
     food_CarbonFootPrint_coef = { 
         "Beef": 27.0, 
         "Lamb": 39.0,
@@ -384,19 +374,31 @@ class FoodDatabase:
     """
     @classmethod
     def get_carbon_coef(cls, food_name):
-        return cls.food_CarbonFootPrint_coef.get(food_name)
+        # Ensure the coefficient is returned as a float
+        coef = cls.food_CarbonFootPrint_coef.get(food_name)
+        return float(coef) if coef is not None else None
+    
     @classmethod
     def get_waste_coef(cls, food_name):
-        return cls.food_waste_coef.get(food_name)
+        # Ensure the coefficient is returned as a float
+        coef = cls.food_waste_coef.get(food_name)
+        return float(coef) if coef is not None else None
+    """
+    Convert CO₂e from kilograms to pounds.
+    """
+    @classmethod
+    def convert_kg_to_lbs(kg):
+        kg_to_lbs = 2.20462
+        return kg * kg_to_lbs
 
 
 """
 A class to calculate the environmental impact for a user based on their food consumption and waste generation.
 """
 class ImpactCalculator:
-    def __init__(self, user):
+    def __init__(self, user,date_range):
         self.user = user
-        self.date_range = None  # Initialize date range
+        self.date_range = date_range  # Initialize date range for past week
 
     def set_date_range(self, start_date, end_date):
         """
@@ -423,7 +425,7 @@ class ImpactCalculator:
         Fetch waste data for the user within the selected date range.
         :return: A list of WasteItem objects.
         """
-        items = WasteItem.objects.all()  # No author field, so fetching all
+        items = WasteItem.objects.all()  
         if self.date_range:
             start_date, end_date = self.date_range
             items = items.filter(date_added__range=(start_date, end_date))
@@ -474,7 +476,6 @@ class ImpactCalculator:
         return f"Total waste for {self.user.username} ({date_info}): {total_waste} lbs"
 
 "Stuff for pushing local articles into green guides"
-
 class Article(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
@@ -482,3 +483,4 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+
